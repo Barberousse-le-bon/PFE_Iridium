@@ -35,3 +35,5 @@ start = [ -0.010, 0.0, z_offset ]        # en mètres
 stop  = [  0.010, 0.005, z_offset ]      # en mètres
 trace.AddBox(priority=10, start=start, stop=stop)
 
+CSX.Write2XML("antenna.xml")
+CSXCAD.ViewCSX(CSX)
