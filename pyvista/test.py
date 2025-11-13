@@ -4,11 +4,11 @@ import pyvista as pv
 # ===============================
 # variables
 # ===============================
-r_min= 0.002        # rayon initial (m)
+r_min= 0.028        # rayon initial (m)
 gap = 0.0003        # espacement entre les spires (m)
 n_turns = 50      # nombre de tours
 n_points = 10000  # nombre de points par bras
-r_max = 0.02 # rayon max de la spirale
+r_max = 0.031 # rayon max de la spirale
 
 trace_width = 0.0005       # largeur du trace (m)
 trace_thickness = 0.00005   # épaisseur trace (m)
