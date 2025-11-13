@@ -155,3 +155,10 @@ ylabel('Zin (Ohm)')
 xlabel('Frequency (GHz)')
 
 show()
+
+CSX_file = "simp_patch.xml"
+CSX.Write2XML(CSX_file)
+
+print("xml exported at ")
+print(CSX_file)
+CSX.Write2XML("antenna.xml")

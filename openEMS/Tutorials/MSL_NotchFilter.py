@@ -90,7 +90,7 @@ stop  = [ MSL_width/2,  MSL_width/2+stub_length, substrate_thickness]
 pec.AddBox(start, stop, priority=10 )
 
 ### Run the simulation
-if 0:  # debugging only
+if 1:  # debugging only
     CSX_file = os.path.join(Sim_Path, 'notch.xml')
     if not os.path.exists(Sim_Path):
         os.mkdir(Sim_Path)

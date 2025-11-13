@@ -126,7 +126,7 @@ mesh.SmoothMeshLines(2, max_res, 1.4)
 nf2ff = FDTD.CreateNF2FFBox()
 
 ### Run the simulation
-if 0:  # debugging only
+if 1:  # debugging only
     CSX_file = os.path.join(Sim_Path, 'bent_patch.xml')
     if not os.path.exists(Sim_Path):
         os.mkdir(Sim_Path)

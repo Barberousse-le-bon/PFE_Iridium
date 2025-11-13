@@ -80,7 +80,7 @@ stop  = [a, b, length];
 Et.AddBox(start, stop);
 
 ### Run the simulation
-if 0:  # debugging only
+if 1:  # debugging only
     CSX_file = os.path.join(Sim_Path, 'rect_wg.xml')
     if not os.path.exists(Sim_Path):
         os.mkdir(Sim_Path)
