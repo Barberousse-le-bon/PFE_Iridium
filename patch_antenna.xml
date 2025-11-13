@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <ContinuousStructure CoordSystem="0">
     <RectilinearGrid DeltaUnit="1" CoordSystem="0">
-        <XLines Qty="0" />
-        <YLines Qty="0" />
-        <ZLines Qty="0" />
+        <XLines Qty="2">-0.0795774715459477,0.0795774715459477</XLines>
+        <YLines Qty="2">-0.0795774715459477,0.0795774715459477</YLines>
+        <ZLines Qty="2">-0.0397887357729738,0.0795774715459477</ZLines>
     </RectilinearGrid>
     <BackgroundMaterial Epsilon="1" Mue="1" Kappa="0" Sigma="0" />
     <ParameterSet />

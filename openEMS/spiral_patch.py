@@ -36,7 +36,25 @@ print(f"inner radius in millimeter = {r_in*1000}")
 
 # create the CAD object 
 
-CSX = CSXCAD.ContinuousStructure() # create the object 
+CSX = CSXCAD.ContinuousStructure() 
+
+
+# simulation box
+SimBox = np.array([r_out*4, r_out*4, r_out*3])
+
+mesh = CSX.GetGrid()
+mesh.SetDeltaUnit(1)
+mesh_res = c_0/(target_frequency+f_min)/1e-3/20
+
+### Generate properties, primitives and mesh-grid
+#initialize the mesh with the "air-box" dimensions
+mesh.AddLine('x', [-SimBox[0]/2, SimBox[0]/2])
+mesh.AddLine('y', [-SimBox[1]/2, SimBox[1]/2]          )
+mesh.AddLine('z', [-SimBox[2]/3, SimBox[2]*2/3]        )
+
+
+
+
 
 # create ground plan :
 
