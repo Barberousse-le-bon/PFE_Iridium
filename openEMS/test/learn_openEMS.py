@@ -11,7 +11,7 @@ CSX = CSXCAD.ContinuousStructure() # creatie the object
 metal = CSX.AddMetal('metal') # create a metal property with name "metal"
 start = [0,0,0] #coordinates of points
 stop  = [1,2,1]
-box   = metal.AddBox(start, stop) # Assign a box to propety "metal"
+#box   = metal.AddBox(start, stop) # Assign a box to propety "metal"
 
 
 # creating a metal sheet 
@@ -36,4 +36,4 @@ stop  = [  0.010, 0.005, z_offset ]      # en mètres
 trace.AddBox(priority=10, start=start, stop=stop)
 
 CSX.Write2XML("antenna.xml")
-CSXCAD.ViewCSX(CSX)
+
