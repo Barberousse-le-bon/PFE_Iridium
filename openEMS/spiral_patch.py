@@ -1,9 +1,37 @@
 import numpy as np
 import CSXCAD
-from CSXCAD.CSProperties import CSPropConductingSheet
-from CSXCAD.ParameterObjects import ParameterSet
+
+
 
 import os
+
+
+
+def create_sprial(theta_offset=0.0, invert_r=False):
+    theta = np.linspace(0, 2*np.pi*n_turns, n_points) + theta_offset
+    r = r_in+ trace_gap*theta
+    valid_r = []
+    for r_value in r :
+        if r_value < r_out:
+            valid_r.append( float(r_value))
+    valid_r = np.array(valid_r) # conversion en tableau numpy
+    theta = theta[:len(valid_r)] # égaliser la longueur
+    if invert_r:
+        valid_r = -valid_r # inversion pour le second bras
+
+
+    x = valid_r * np.cos(theta)
+    y = valid_r * np.sin(theta)
+    z = np.full_like(x, trace_thikness + substrate_thikness)  # décale la spirale en z
+    points = np.column_stack((x, y, z))
+
+    return 0
+
+
+
+
+
+
 # parameters 
 
 target_frequency = 1622e6 # MHz
@@ -22,6 +50,8 @@ pi = np.pi
 sigma_cu = 5.8e7       # conductivity S/m
 substrate_kappa  = 1e-3 * 2*pi*2.45e9 * epsilon_0*epsilon_r # from the example Simple_patch antenna of openEMS
 
+n_turns = 50 # just for generating the base spiral
+n_points = 10000  # number of points by arms
 
 #formulas 
 
@@ -74,7 +104,19 @@ substrat_stop = [+r_out+0.005, +r_out+0.005, trace_thikness+substrate_thikness]
 substrate_plan = CSX.AddMaterial('substrate', epsilon=epsilon_r, kappa=substrate_kappa)
 substrate_plan.AddBox(priority=10, start=substrat_start, stop=substrat_stop )
 
+# creating tht spiral
+
+create_sprial()
+
+
+antenna = CSX.AddMaterial('spiral')
+#pt_1 = .AddVertex([0,0,0])
+
+
 
 # export substrate and display it using the CAD
 CSX.Write2XML("patch_antenna.xml")
 os.system("AppCSXCAD " + "patch_antenna.xml")
+
+
+
