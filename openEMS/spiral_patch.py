@@ -7,8 +7,13 @@ import os
 
 
 
-def create_sprial(theta_offset=0.0, invert_r=False):
-    theta = np.linspace(0, 2*np.pi*n_turns, n_points) + theta_offset
+def create_sprial(invert_r=False, material=None):
+    if material == None :
+        print("wrong material given")
+        exit(1)
+
+
+    theta = np.linspace(0, 2*np.pi*n_turns, n_points)
     r = r_in+ trace_gap*theta
     valid_r = []
     for r_value in r :
@@ -25,7 +30,17 @@ def create_sprial(theta_offset=0.0, invert_r=False):
     z = np.full_like(x, trace_thikness + substrate_thikness)  # décale la spirale en z
     points = np.column_stack((x, y, z))
 
-    return 0
+    array_points = []
+    for point in points:
+        array_point = np.array(point)
+        array_points.append(array_point)
+    
+    curve = material.AddCurve(points=[array_points[0], array_points[1], array_points[2]])
+    curve.ClearPoints()
+    for point in array_points:
+        curve.AddPoint(point)
+
+    return curve
 
 
 
@@ -106,7 +121,10 @@ substrate_plan.AddBox(priority=10, start=substrat_start, stop=substrat_stop )
 
 # creating tht spiral
 
-create_sprial()
+arm_material = CSX.AddMetal('arm')
+
+spiral_arm = create_sprial(False, arm_material)
+spiral_arm2 = create_sprial(True, arm_material)
 
 
 antenna = CSX.AddMaterial('spiral')
