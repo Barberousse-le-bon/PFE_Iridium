@@ -118,7 +118,7 @@ port = FDTD.AddLumpedPort(1 ,feed_R, start, stop, 'z', 1.0, priority=5)
 nf2ff = FDTD.CreateNF2FFBox(opt_resolution=[lambda0/15]*3)
 
 ### Run the simulation
-if 0:  # debugging only
+if 1:  # debugging only
     CSX_file = os.path.join(Sim_Path, 'helix.xml')
     if not os.path.exists(Sim_Path):
         os.mkdir(Sim_Path)

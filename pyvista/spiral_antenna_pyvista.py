@@ -4,11 +4,11 @@ import pyvista as pv
 # ===============================
 # variables
 # ===============================
-r_min= 0.002        # rayon initial (m)
+r_min= 0.023        # rayon initial (m)
 gap = 0.0003        # espacement entre les spires (m)
 n_turns = 50      # nombre de tours
 n_points = 10000  # nombre de points par bras
-r_max = 0.02 # rayon max de la spirale
+r_max = 0.039 # rayon max de la spirale
 
 trace_width = 0.0005       # largeur du trace (m)
 trace_thickness = 0.00005   # épaisseur trace (m)
@@ -102,5 +102,5 @@ plotter.show()
 antenna = spiral1 + spiral2
 
 # === Export STL ===
-antenna.save("antenne_spirale.stl")
-print("stl exporté")
+antenna.save("spiral_antenna.stl")
+print("stl exported")

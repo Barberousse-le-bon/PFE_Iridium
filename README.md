@@ -5,27 +5,44 @@ The goal of the project is to make a create a PCB archimedean spiral antenna use
 ![3D model of the spiral using pyvista](image_spirale.png)
 
 ## Current state
-
-- An example model of what the antenna should look like in the final state can be seen using :
+### Work done
+- An example model of what the antenna should look like in the final state can be seen in the pyvisa folder using :
 
 ```bash
 
-pyhton3 test.py
+pyhton3 spiral_antenna_pyvista.py
 
 ```
 
-in the pyvista folder.
 
-- the code for the EM simulation is on progress. Some understanding difficulties are encounterd at this step due to the documentation.
+- The CAD using CSXCAD is done and can be seen in openEMS/simulation folder and run by using : 
 
+```bash
+
+python3 spiral_patch.py
+
+```
+
+or 
+
+```bash 
+
+AppCSXCAD patch_antenna.xml 
+
+```
+![3D model of the spiral using CSXCAD](spiral_antenna_CSXCAD.png)
+
+### Next step
+
+Adding the EMS simulation for the CSXCAD model 
 ## Tools used
 
-### programming and modelisation
+### Programming and modelisation
 
 - pyvista : for 3D modeling
-- openEMS : for EM simulation and testing
+- openEMS + CSXCAD: for EM simulation and testing
 
-### hardware
+### Hardware
 
 - RaspberryPi
 - rtlSDR

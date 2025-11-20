@@ -102,7 +102,7 @@ mesh.SmoothMeshLines('all', mesh_res, 1.4)
 nf2ff = FDTD.CreateNF2FFBox()
 
 ### Run the simulation
-if 0:  # debugging only
+if 1:  # debugging only
     CSX_file = os.path.join(Sim_Path, 'simp_patch.xml')
     if not os.path.exists(Sim_Path):
         os.mkdir(Sim_Path)
@@ -155,3 +155,10 @@ ylabel('Zin (Ohm)')
 xlabel('Frequency (GHz)')
 
 show()
+
+CSX_file = "simp_patch.xml"
+CSX.Write2XML(CSX_file)
+
+print("xml exported at ")
+print(CSX_file)
+CSX.Write2XML("antenna.xml")
