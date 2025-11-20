@@ -61,13 +61,33 @@ spiral_arm = create_sprial(False, arm_material)
 spiral_arm2 = create_sprial(True, arm_material)
 
 
-antenna = CSX.AddMaterial('spiral')
-#pt_1 = .AddVertex([0,0,0])
-
-
+grid = CSX.GetGrid()
+grid.SetLines('x', np.arange(-50,50,1))
+grid.SetLines('y', np.arange(-50,50,1))
+grid.SetLines('z', np.arange(-2,2.1,1))
+grid.SetDeltaUnit(1e-3)
 
 # export substrate and display it using the CAD
 CSX.Write2XML("patch_antenna.xml")
 os.system("AppCSXCAD " + "patch_antenna.xml")
 
 
+# simulation part 
+
+
+
+
+FDTD = openEMS(NrTS=1e8, EndCriteria=1e-5) # number of timesteps, end if the energy is below 
+
+FDTD.SetCSX(CSX)
+
+
+FDTD.SetBoundaryCond(['MUR', 'MUR', 'MUR', 'MUR', 'MUR', 'MUR']) # mur absorbs everything
+FDTD.SetGaussExcite(const.f_center, const.f_max-const.f_min) #center freq, -20dB bandwidth
+FDTD.AddLumpedPort(port_nr=1, R=50, start=[10, 0, -2], stop=[10, 0, 2], p_dir='z', excite=1)
+
+FDTD.AddEdges2Grid(dirs='all', properties=ground_plan)
+FDTD.AddEdges2Grid(dirs='all', properties=substrate_plan)
+FDTD.AddEdges2Grid(dirs='all', properties=arm_material)
+
+FDTD.Run(sim_path='/home/lucas/iridium/openEMS/simulation/sim')

@@ -25,3 +25,4 @@ n_points = 10000  # number of points by arms
 
 r_out = c_0/(2*pi*f_min) # meter
 r_in = c_0/(2*pi*f_max)
+f_center = (f_max+f_min)/2
