@@ -22,21 +22,35 @@ v3 = poly.AddVertex(0.0, 0.0, 10.0)
 
 # Ajout des faces (triangles uniquement, comme précisé dans la doc)
 # Face « base » (triangle 0-1-2)
-poly.AddFace([0, 1, 2])
+#poly.AddFace([0, 1, 2])
 # Face « top » (triangle 3-4-5)
-poly.AddFace([0, 1, 3])
+#poly.AddFace([0, 1, 3])
 # Face « côté » 1 (0-1-4)
-poly.AddFace([1, 2, 3])
+#poly.AddFace([1, 2, 3])
 # Face « côté » 2 (0-4-3)
-poly.AddFace([0, 2, 3])
+#poly.AddFace([0, 2, 3])
 
 
 
-x = np.array([0, 0, 1, 1]) + 1.5
-y = np.array([0, 1, 1, 0]) + 2.5
-z = np.array([0, 1, 3, 4])
 
-curve = mat2.AddCurve(points=[x,y,z])
+theta = np.linspace(0, 2*np.pi*50, 50)
+x = 1 * np.cos(theta)
+y = 1 * np.sin(theta)
+z = np.full_like(x, 0.0035e-3 + 1.5e-3)  # décale la spirale en z
+points = np.column_stack((x, y, z))
+array_points = []
+for point in points:
+    array_point = np.array(point)
+    array_points.append(array_point)
+
+print(array_points[0][0])
+print(array_points[0][1])
+print(array_points[0][2])
+
+curve = mat2.AddCurve(points=[array_points[0], array_points[1], array_points[2]])
+curve.ClearPoints()
+for point in array_points:
+    curve.AddPoint(point)
 
 
 
