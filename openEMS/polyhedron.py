@@ -7,7 +7,7 @@ csx = CSXCAD.ContinuousStructure()
 
 # Propriétés (par exemple matériau cuivre)
 mat = csx.AddMaterial('substrate', epsilon=1, kappa=5e7)
-
+mat2 = csx.AddMaterial('substrate', epsilon=1, kappa=5e7)
 
 # Création du polyèdre
 poly = mat.AddPolyhedron()
@@ -29,6 +29,17 @@ poly.AddFace([0, 1, 3])
 poly.AddFace([1, 2, 3])
 # Face « côté » 2 (0-4-3)
 poly.AddFace([0, 2, 3])
+
+
+
+x = np.array([0, 0, 1, 1]) + 1.5
+y = np.array([0, 1, 1, 0]) + 2.5
+z = np.array([0, 1, 3, 4])
+
+curve = mat2.AddCurve(points=[x,y,z])
+
+
+
 
 
 # Eventuellement appliquer une transformation (translation, rotation)
