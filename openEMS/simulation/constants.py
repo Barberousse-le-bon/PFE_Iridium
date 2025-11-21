@@ -27,3 +27,9 @@ n_points = 10000  # number of points by arms
 r_out = c_0/(2*pi*f_min)*1000 # meter
 r_in = c_0/(2*pi*f_max)*1000
 f_center = (f_max+f_min)/2
+f_c = f_max-f_min
+
+# others 
+
+
+sim_path='/home/lucas/iridium/openEMS/simulation/sim'

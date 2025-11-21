@@ -2,6 +2,7 @@ import numpy as np
 import CSXCAD
 from openEMS.openEMS import openEMS
 import os
+from pylab import *
 
 
 import constants as const
@@ -63,33 +64,116 @@ spiral_arm2 = create_sprial(True, arm_material2)
 
 
 grid = CSX.GetGrid()
-grid.SetLines('x', np.arange(-50,50,1))
-grid.SetLines('y', np.arange(-50,50,1))
-grid.SetLines('z', np.arange(-2,2.1,1))
+grid.SetLines('x', np.arange(-150,150,1))
+grid.SetLines('y', np.arange(-150,150,1))
+grid.SetLines('z', np.arange(-80,80,1))
 grid.SetDeltaUnit(1e-3)
 
 # export substrate and display it using the CAD
 CSX.Write2XML("patch_antenna.xml")
-os.system("AppCSXCAD " + "patch_antenna.xml")
+#os.system("AppCSXCAD " + "patch_antenna.xml")
 
 
 # simulation part 
 
 
+### ---------------- SIMULATION ---------------- ###
 
-
-FDTD = openEMS(NrTS=1e8, EndCriteria=1e-5) # number of timesteps, end if the energy is below 
-
+# Create FDTD
+FDTD = openEMS(NrTS=2e8, EndCriteria=1e-6)
 FDTD.SetCSX(CSX)
 
+# Boundary conditions : PML recommended
+FDTD.SetBoundaryCond(['PML_8', 'PML_8', 'PML_8', 'PML_8', 'PML_8', 'PML_8'])
 
-FDTD.SetBoundaryCond(['MUR', 'MUR', 'MUR', 'MUR', 'MUR', 'MUR']) # mur absorbs everything
-FDTD.SetGaussExcite(const.f_center, const.f_max-const.f_min) #center freq, -20dB bandwidth
-FDTD.AddLumpedPort(port_nr=1, R=50, start=[10, 0, -2], stop=[10, 0, 2], p_dir='z', excite=1)
+# Excitation : Gaussian covering 1.2–2.0 GHz
+FDTD.SetGaussExcite(const.f_center, const.f_c)
 
+# Lumped Port : feed at center of spiral
+port = FDTD.AddLumpedPort(
+    port_nr=1,
+    R=50,
+    start=[0, 0, -0.5],
+    stop=[0, 0, +0.5],
+    p_dir='z',
+    excite=1
+)
+
+# Add mesh refinement based on metallic objects
 FDTD.AddEdges2Grid(dirs='all', properties=ground_plan)
 FDTD.AddEdges2Grid(dirs='all', properties=substrate_plan)
 FDTD.AddEdges2Grid(dirs='all', properties=arm_material1)
 FDTD.AddEdges2Grid(dirs='all', properties=arm_material2)
 
-FDTD.Run(sim_path='/home/lucas/iridium/openEMS/simulation/sim')
+# NF2FF box
+nf2ff = FDTD.CreateNF2FFBox()
+
+# Run simulation
+FDTD.Run(sim_path=const.sim_path)
+
+
+### ---------------- POST-PROCESSING ---------------- ###
+
+# Frequency vector : 1.2–2.0 GHz
+f = np.linspace(const.f_min, const.f_max, 801)
+
+# Calculate S11
+port.CalcPort(const.sim_path, f)
+s11 = port.uf_ref / port.uf_inc
+s11_dB = 20*np.log10(np.abs(s11))
+
+figure()
+plot(f/1e9, s11_dB, 'k-', linewidth=2)
+xlabel('Frequency (GHz)')
+ylabel('S11 (dB)')
+title('Reflection Coefficient S11')
+grid(True)
+
+
+### --- Find resonance for NF2FF ---
+idx = np.argmin(np.abs(s11))
+f_res = f[idx]
+
+print(f"Resonance estimated at {f_res/1e9:.3f} GHz")
+
+
+### ---------------- NF2FF Far-field ---------------- ###
+
+theta = np.arange(-180.0, 180.0, 2.0)
+phi = [0., 90.]
+
+nf2ff_res = nf2ff.CalcNF2FF(
+    const.sim_path,
+    f_res,
+    theta,
+    phi,
+    center=[0, 0, const.substrate_thikness/1000 + const.trace_thikness/2000]
+)
+
+# Normalized directivity patterns
+E_norm = 20 * np.log10(nf2ff_res.E_norm[0] / np.max(nf2ff_res.E_norm[0])) \
+         + 10*np.log10(nf2ff_res.Dmax[0])
+
+figure()
+plot(theta, E_norm[:, 0], 'k-', label='xz-plane')
+plot(theta, E_norm[:, 1], 'r--', label='yz-plane')
+xlabel("Theta (deg)")
+ylabel("Directivity (dBi)")
+title(f'Far-field Pattern @ {f_res/1e9:.3f} GHz')
+legend()
+grid(True)
+
+
+### ---------------- Input Impedance ---------------- ###
+
+Zin = port.uf_tot / port.if_tot
+
+figure()
+plot(f/1e9, np.real(Zin), 'k-', linewidth=2, label='Real(Zin)')
+plot(f/1e9, np.imag(Zin), 'r--', linewidth=2, label='Imag(Zin)')
+xlabel("Frequency (GHz)")
+ylabel("Impedance (Ohm)")
+legend()
+grid(True)
+
+show()
