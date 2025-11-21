@@ -9,8 +9,8 @@ from create_spiral import create_sprial
 
 
 
-print(f"outer radius in millimeter = {const.r_out*1000}")
-print(f"inner radius in millimeter = {const.r_in*1000}")
+print(f"outer radius in millimeter = {const.r_out}")
+print(f"inner radius in millimeter = {const.r_in}")
 
 
 # create the CAD object 
@@ -37,8 +37,8 @@ mesh.AddLine('z', [-SimBox[2]/3, SimBox[2]*2/3]        )
 
 # create ground plan :
 
-ground_start = [-const.r_out-0.005, -const.r_out-0.005, 0]
-gound_stop = [+const.r_out+0.005, +const.r_out+0.005, const.trace_thikness]
+ground_start = [-const.r_out-const.extra_width_gnd, -const.r_out-const.extra_width_gnd, 0]
+gound_stop = [+const.r_out+const.extra_width_gnd, +const.r_out+const.extra_width_gnd, const.trace_thikness]
 
 ground_plan = CSX.AddMetal('ground plan') # create a metal property with name "ground plan"
 ground_plan.AddBox(priority=10, start=ground_start, stop=gound_stop)
@@ -47,18 +47,19 @@ ground_plan.AddBox(priority=10, start=ground_start, stop=gound_stop)
 # create the subtrate
 
 
-substrat_start = [-const.r_out-0.005, -const.r_out-0.005, const.trace_thikness]
-substrat_stop = [+const.r_out+0.005, +const.r_out+0.005, const.trace_thikness+const.substrate_thikness]
+substrat_start = [-const.r_out-const.extra_width_gnd, -const.r_out-const.extra_width_gnd, const.trace_thikness]
+substrat_stop = [+const.r_out+const.extra_width_gnd, +const.r_out+const.extra_width_gnd, const.trace_thikness+const.substrate_thikness]
 
 substrate_plan = CSX.AddMaterial('substrate', epsilon=const.epsilon_r, kappa=const.substrate_kappa)
 substrate_plan.AddBox(priority=10, start=substrat_start, stop=substrat_stop )
 
 # creating tht spiral
 
-arm_material = CSX.AddMetal('arm')
+arm_material1 = CSX.AddMetal('arm1')
+arm_material2 = CSX.AddMetal('arm2')
 
-spiral_arm = create_sprial(False, arm_material)
-spiral_arm2 = create_sprial(True, arm_material)
+spiral_arm = create_sprial(False, arm_material1)
+spiral_arm2 = create_sprial(True, arm_material2)
 
 
 grid = CSX.GetGrid()
@@ -88,6 +89,7 @@ FDTD.AddLumpedPort(port_nr=1, R=50, start=[10, 0, -2], stop=[10, 0, 2], p_dir='z
 
 FDTD.AddEdges2Grid(dirs='all', properties=ground_plan)
 FDTD.AddEdges2Grid(dirs='all', properties=substrate_plan)
-FDTD.AddEdges2Grid(dirs='all', properties=arm_material)
+FDTD.AddEdges2Grid(dirs='all', properties=arm_material1)
+FDTD.AddEdges2Grid(dirs='all', properties=arm_material2)
 
 FDTD.Run(sim_path='/home/lucas/iridium/openEMS/simulation/sim')
