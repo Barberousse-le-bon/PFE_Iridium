@@ -8,7 +8,7 @@ from pylab import *
 import constants as const
 from create_spiral import create_sprial
 
-
+postproc_only = True
 
 print(f"outer radius in millimeter = {const.r_out}")
 print(f"inner radius in millimeter = {const.r_in}")
@@ -71,7 +71,7 @@ grid.SetDeltaUnit(1e-3)
 
 # export substrate and display it using the CAD
 CSX.Write2XML("patch_antenna.xml")
-#os.system("AppCSXCAD " + "patch_antenna.xml")
+os.system("AppCSXCAD " + "patch_antenna.xml")
 
 
 # simulation part 
@@ -109,7 +109,8 @@ FDTD.AddEdges2Grid(dirs='all', properties=arm_material2)
 nf2ff = FDTD.CreateNF2FFBox()
 
 # Run simulation
-FDTD.Run(sim_path=const.sim_path)
+if not postproc_only :
+    FDTD.Run(sim_path=const.sim_path)
 
 
 ### ---------------- POST-PROCESSING ---------------- ###
@@ -127,7 +128,7 @@ plot(f/1e9, s11_dB, 'k-', linewidth=2)
 xlabel('Frequency (GHz)')
 ylabel('S11 (dB)')
 title('Reflection Coefficient S11')
-grid(True)
+#grid(True)
 
 
 ### --- Find resonance for NF2FF ---
@@ -161,7 +162,7 @@ xlabel("Theta (deg)")
 ylabel("Directivity (dBi)")
 title(f'Far-field Pattern @ {f_res/1e9:.3f} GHz')
 legend()
-grid(True)
+#grid(True)
 
 
 ### ---------------- Input Impedance ---------------- ###
@@ -174,6 +175,6 @@ plot(f/1e9, np.imag(Zin), 'r--', linewidth=2, label='Imag(Zin)')
 xlabel("Frequency (GHz)")
 ylabel("Impedance (Ohm)")
 legend()
-grid(True)
+#grid(True)
 
 show()
