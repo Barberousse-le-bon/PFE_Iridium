@@ -34,7 +34,7 @@ AppCSXCAD patch_antenna.xml
 
 ### Results of the current test (first)
 
-![far field pattern ](far_field_patter_first_test.png)
+![far field pattern ](far_field_pattern_first_test.png)
 ![input inpedance](impedance_first_test.png)
 ![S11](s11_first_test.png)
 
