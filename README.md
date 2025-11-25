@@ -32,6 +32,12 @@ AppCSXCAD patch_antenna.xml
 ```
 ![3D model of the spiral using CSXCAD](spiral_antenna_CSXCAD.png)
 
+### Results of the current test (first)
+
+![far field pattern ](far_field_patter_first_test.png)
+![input inpedance](impedance_first_test.png)
+![S11](s11_first_test.png)
+
 ### Next step
 
 Adding the EMS simulation for the CSXCAD model 
