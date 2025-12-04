@@ -32,4 +32,7 @@ f_c = f_max-f_min
 # others 
 
 
-sim_path='/home/lucas/iridium/openEMS/simulation/sim'
+import os
+
+sim_path = os.path.join(os.getcwd(), "sim")
+print("sim_path =", sim_path)

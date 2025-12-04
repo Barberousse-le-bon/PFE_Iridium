@@ -3,12 +3,16 @@ import CSXCAD
 from openEMS.openEMS import openEMS
 import os
 from pylab import *
+import time
 
 
 import constants as const
 from create_spiral import create_sprial
 
-postproc_only = True
+
+start = time.time()
+
+postproc_only = False
 
 print(f"outer radius in millimeter = {const.r_out}")
 print(f"inner radius in millimeter = {const.r_in}")
@@ -93,7 +97,7 @@ FDTD.SetGaussExcite(const.f_center, const.f_c)
 port = FDTD.AddLumpedPort(
     port_nr=1,
     R=50,
-    start=[0, 0, -0.5],
+    start=[0, 0, 0.05],
     stop=[0, 0, +0.5],
     p_dir='z',
     excite=1
@@ -111,7 +115,9 @@ nf2ff = FDTD.CreateNF2FFBox()
 # Run simulation
 if not postproc_only :
     FDTD.Run(sim_path=const.sim_path)
+end = time.time()
 
+print("Temps d'exécution :", end - start, "secondes")
 
 ### ---------------- POST-PROCESSING ---------------- ###
 
