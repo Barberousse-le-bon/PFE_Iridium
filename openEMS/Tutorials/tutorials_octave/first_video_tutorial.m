@@ -95,7 +95,7 @@ RunOpenEMS('temp', 'test.xml');
 # dispay results
 
 close all % close existing graph windows if any
-freq = linspace(F0-FC, F0+FC, 201);
+freq = linspace(F0-Fc, F0+Fc, 201);
 port = calcPort(port, 'temp', freq);
 s11 = port{1}.uf.ref./port{1}.uf.inc;
 s21 = port{2}.uf.ref./port{1}.uf.inc;
