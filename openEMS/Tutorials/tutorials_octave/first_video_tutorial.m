@@ -85,7 +85,7 @@ WriteOpenEMS('temp/test.xml', FDTD, CSX);
 # display  3D model
 
 CSXGeomPlot('temp/test.xml');
-#uncomment above for not open the CAD
+#comment above for not open the CAD
 #uncomment below for not simulating,
 #return;
 # sumulation
@@ -110,15 +110,6 @@ xlabel('frequency f / MHz');
 ylabel('Magnitude, dB');
 ylim([-50 5]);
 
-%{
-figure
-plot( freq/1e6, 20*log10(abs(s21)), 'k-');
-grid on
-title( 'reflection coefficient S_{21}' );
-xlabel( 'frequency f / MHz' );
-ylabel( 'reflection coefficient |S_{21}|' );
-ylim([-50 5]);
-%}
 
 % draw electromagnetic field distribution
 [myField myMesh] = ReadHDF5Dump(['temp' '/E_field.h5']);
@@ -180,4 +171,11 @@ DIM=max([DIM1,DIM2,DIM3,DIM4])*1.25; % leave 25% empty from the sides
 
 disp(DIM)
 axis ([-DIM, DIM, -DIM, DIM], "square");
+
+
+
+% display phi
+figure
+plotFFdB(nf2ff,'xaxis','theta','param',[1 2]);
+drawnow
 
