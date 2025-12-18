@@ -1,27 +1,29 @@
 ################################################################################
 #                            CONSTANTS                                         #
 ################################################################################
+clear all;
+close all;
+
 f0 = 2e9;
-fc = 3*10^9;    # corner frequ +- 3GHz
-epsilon = 4.8;
+fc = f0/2;    # corner frequ
+epsilon = 4.4;
 substrate_width = 20;
 substrate_length = 40;
 substrate_height = 1;
-
+trace_thikness = 0;
 z0 = 50; #ohm
+c = 3e11; # mm/s
 
-# line width calculation
+# line calculations
 
-A = (z0/60)*sqrt((epsilon+1)/2)+((epsilon-1)/epsilon+1)*(0.23+0.11/epsilon);
-B = (377*pi)/(z0*2*sqrt(epsilon));
+line_width = ((7.48*substrate_height)/exp(z0*(sqrt(epsilon+1.41)/87)))-1.25*trace_thikness
 
-wh = (8*exp(A))/(exp(2*A)-2)
-
-if(wh < 2)
-  wh = (2/pi)*((B-1-log(2*B-1))+(epsilon-1)/(2*epsilon)*(log(B-1)+0.39-(0.61/epsilon)))
-endif;
-
-line_width = wh*substrate_height
+lambda0 = c/f0;
+eeff = (epsilon + 1)/2 + (epsilon - 1)/2 * (1 / sqrt(1 + 12*substrate_height/line_width));
+lambdag = lambda0 / sqrt(eeff);
+L_quarter = lambdag / 4;
+deltaL = 0.412*substrate_height * ((eeff + 0.3)*(line_width/substrate_height + 0.264)) / ((eeff - 0.258)*(line_width/substrate_height + 0.8));
+L_stub = L_quarter - deltaL;
 ################################################################################
 #                            CREATION OF THE MODEL                             #
 ################################################################################
@@ -35,7 +37,6 @@ CSX = InitCSX();
 CSX = AddMetal(CSX, 'stripline');         # microstrip line material
 CSX = AddMetal(CSX, 'ground');       # gnd line material
 CSX = AddMaterial(CSX, 'substrate');  # substrate material
-# Er = 4.8, permittivity
 CSX = SetMaterialProperty(CSX, 'substrate', 'Epsilon', epsilon);
 
 
@@ -46,15 +47,18 @@ CSX = AddBox(CSX, 'substrate', 0, start_substrate, stop_substrate );
 
 # add ground
 start_gnd = [-substrate_width/2,-substrate_length/2,-substrate_height];
-stop_gnd = [substrate_width/2,substrate_length/2,-substrate_height];
+stop_gnd = [substrate_width/2,substrate_length/2,-substrate_height-trace_thikness];
 CSX = AddBox(CSX, 'ground', 0, start_gnd, stop_gnd );
 
 
 # create line :
+start_line = [-line_width/2, -substrate_length/2, 0];
+stop_line = [line_width/2, substrate_length/2, trace_thikness];
+CSX = AddBox(CSX, 'stripline', 0, start_line, stop_line );
 
+#add a quarter wave stub
 
-
-
+#CSX = AddBox(CSX, 'stripline', 1, [ line_width/2, -line_width/2, 0], [ line_width/2 + L_stub, line_width/2, trace_thikness ]);
 
 
 # Field dump for electromagnetic field visualization
@@ -74,9 +78,9 @@ mesh = DetectEdges(CSX);
 
 # append mesh with empty space boundaries
 
-mesh.x = [mesh.x, -25, 25]; # two YZ planes at 25 and -25
-mesh.y = [mesh.y, -25, 25]; # two XZ planes at 25 and -25
-mesh.z = [mesh.z, -15, 15]; # two XY planes at 25 and -25
+mesh.x = [mesh.x, -substrate_width, substrate_width]; # two YZ planes at 25 and -25
+mesh.y = [mesh.y, -substrate_length, substrate_length]; # two XZ planes at 25 and -25
+mesh.z = [mesh.z, -substrate_height-10, substrate_height+10]; # two XY planes at 25 and -25
 
 # increase mesh resolution
 
@@ -96,12 +100,12 @@ FDTD = SetGaussExcite(FDTD, f0, fc);
 FDTD = SetBoundaryCond(FDTD, { 'MUR','MUR','MUR','MUR','MUR','MUR'});
 
 # add two lumped ports
-start_lumped1 = [-1.8/2,-substrate_length/2,-substrate_height];
-stop_lumped1 = [1.8/2,-substrate_length/2,0];
+start_lumped1 = [-line_width/2,-substrate_length/2,-substrate_height];
+stop_lumped1 = [line_width/2,-substrate_length/2,0];
 [CSX port{1}] = AddLumpedPort(CSX, 1,1,50, start_lumped1, stop_lumped1,[0,0,1], true);
 
-start_lumped2 = [-1.8/2,substrate_length/2,-substrate_height];
-stop_lumped2 = [1.8/2,substrate_length/2,0];
+start_lumped2 = [-line_width/2,substrate_length/2,-substrate_height];
+stop_lumped2 = [line_width/2,substrate_length/2,0];
 [CSX port{2}] = AddLumpedPort(CSX, 1,2,50, start_lumped2, stop_lumped2,[0,0,1], false);
 
 
@@ -120,7 +124,7 @@ CSXGeomPlot('stripline_simulation/stripline.xml');
 
 
 #uncomment below for not simulating,
-return;
+#return;
 ################################################################################
 #                                 FDTD SIMULATION                              #
 ################################################################################
@@ -130,7 +134,7 @@ RunOpenEMS('stripline_simulation', 'stripline.xml');
 # dispay results
 
 close all % close existing graph windows if any
-freq = linspace(f0-Fc, f0+Fc, 201);
+freq = linspace(f0-fc, f0+fc, 201);
 port = calcPort(port, 'stripline_simulation', freq);
 s11 = port{1}.uf.ref./port{1}.uf.inc;
 s21 = port{2}.uf.ref./port{1}.uf.inc;
@@ -147,8 +151,8 @@ ylim([-50 5]);
 
 
 % draw electromagnetic field distribution
-[myField myMesh] = ReadHDF5Dump(['temp' '/E_field.h5']);
-myField2 = GetField_TD2FD(myField, F0);
+[myField myMesh] = ReadHDF5Dump(['stripline_simulation' '/E_field.h5']);
+myField2 = GetField_TD2FD(myField, f0);
 sx=size(myField2.FD.values{1})(1);
 sy=size(myField2.FD.values{1})(2);
 
@@ -190,7 +194,7 @@ for nn = 1:metalN
   endfor
 endfor
 
-title(sprintf("Ez field distribution @ %.2f GHz",F0/1e9));
+title(sprintf("Ez field distribution at %.2f GHz",f0/1e9));
 
 X1=abs(CSX.Properties.Material{1,1}.Primitives.Box{1,1}.P1.ATTRIBUTE.X);
 Y1=abs(CSX.Properties.Material{1,1}.Primitives.Box{1,1}.P1.ATTRIBUTE.Y);
@@ -207,4 +211,10 @@ DIM=max([DIM1,DIM2,DIM3,DIM4])*1.25; % leave 25% empty from the sides
 disp(DIM)
 axis ([-DIM, DIM, -DIM, DIM], "square");
 
+################################################################################
+#                            DISPLAY LINE PARAMETERS                           #
+################################################################################
+
+
+line_width
 

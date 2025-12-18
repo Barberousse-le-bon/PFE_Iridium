@@ -24,7 +24,7 @@ CSX = AddBox(CSX, 'my_line', 0, start_line, stop_line );
 
 #add a quarter wave stub
 
-CSX = AddBox(CSX, 'my_line', 1, [1.8/2 -1.8/2 0], [6.7 1.8/2 0]);  % quarterwave stub
+#CSX = AddBox(CSX, 'my_line', 1, [1.8/2 -1.8/2 0], [6.7 1.8/2 0]);  % quarterwave stub
 
 # add ground
 start_gnd = [-10,-20,-1];
@@ -174,8 +174,4 @@ axis ([-DIM, DIM, -DIM, DIM], "square");
 
 
 
-% display phi
-figure
-plotFFdB(nf2ff,'xaxis','theta','param',[1 2]);
-drawnow
 
