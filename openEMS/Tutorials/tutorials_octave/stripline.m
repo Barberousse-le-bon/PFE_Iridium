@@ -4,13 +4,16 @@
 clear all;
 close all;
 
+only_display = 1;
+
+
 f0 = 2e9;
 fc = f0/2;    # corner frequ
 epsilon = 4.4;
 substrate_width = 20;
 substrate_length = 40;
-substrate_height = 1;
-trace_thikness = 0;
+substrate_height = 1.6;
+trace_thikness = 0.03;
 z0 = 50; #ohm
 c = 3e11; # mm/s
 
@@ -18,7 +21,7 @@ c = 3e11; # mm/s
 
 line_width = ((7.48*substrate_height)/exp(z0*(sqrt(epsilon+1.41)/87)))-1.25*trace_thikness
 
-lambda0 = c/f0;
+lambda0 = c/f0 # in mm
 eeff = (epsilon + 1)/2 + (epsilon - 1)/2 * (1 / sqrt(1 + 12*substrate_height/line_width));
 lambdag = lambda0 / sqrt(eeff);
 L_quarter = lambdag / 4;
@@ -27,7 +30,7 @@ L_stub = L_quarter - deltaL;
 ################################################################################
 #                            CREATION OF THE MODEL                             #
 ################################################################################
-# inti CSX cad structure
+# init CSX cad structure
 
 CSX = InitCSX();
 
@@ -84,7 +87,7 @@ mesh.z = [mesh.z, -substrate_height-10, substrate_height+10]; # two XY planes at
 
 # increase mesh resolution
 
-mesh = SmoothMesh(mesh, 0.5, 1.25); # mesh, max res, ratio
+mesh = SmoothMesh(mesh, substrate_height/20, 1.25); # mesh, max res, ratio
 
 
 # define rectangualr grid
@@ -119,18 +122,15 @@ WriteOpenEMS('stripline_simulation/stripline.xml', FDTD, CSX);
 
 CSXGeomPlot('stripline_simulation/stripline.xml');
 #comment above for not open the CAD
-
-
-
-
 #uncomment below for not simulating,
 #return;
 ################################################################################
 #                                 FDTD SIMULATION                              #
 ################################################################################
 
-RunOpenEMS('stripline_simulation', 'stripline.xml');
-
+if(only_display ==0 )
+  RunOpenEMS('stripline_simulation', 'stripline.xml');
+endif;
 # dispay results
 
 close all % close existing graph windows if any
@@ -142,12 +142,12 @@ s21 = port{2}.uf.ref./port{1}.uf.inc;
 figure
 hold on;
 plot( freq/1e6, 20*log10(abs(s11)), 'r-');
-plot( freq/1e6, 20*log10(abs(s21)), 'b-');
+#plot( freq/1e6, 20*log10(abs(s21)), 'b-');
 grid on
 title({'Reflection Coefficients {\color{red}|S_{11}|} and {\color{blue}|S_{21}|}'});
 xlabel('frequency f / MHz');
 ylabel('Magnitude, dB');
-ylim([-50 5]);
+#ylim([-50 5]);
 
 
 % draw electromagnetic field distribution
@@ -179,7 +179,7 @@ set(ss,'FaceColor','interp','EdgeColor','none'); % replace 'none' with 'black' t
 SCALE=1/1000; % to meters
 
 % draw layout (metal layers)
-metalN=size(CSX.Properties.Metal)(2);
+metalN=size(CSX.Properties.Metal)(2)
 for nn = 1:metalN
   primitives=CSX.Properties.Metal{1,nn}.Primitives.Box;
   primitivesN=size(primitives)(2);
@@ -190,7 +190,7 @@ for nn = 1:metalN
     Y2=primitives{1,tt}.P2.ATTRIBUTE.Y;
     SX=X2-X1;
     SY=Y2-Y1;
-    rectangle("Position", [X1*SCALE, Y1*SCALE, SX*SCALE, SY*SCALE], "EdgeColor", "black", "FaceColor", "none");
+     rectangle("Position", [X1*SCALE, Y1*SCALE, SX*SCALE, SY*SCALE], "EdgeColor", "black", "FaceColor", "none");
   endfor
 endfor
 
