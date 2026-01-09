@@ -4,7 +4,7 @@
 clear all;
 close all;
 
-only_display = 0;
+only_display = 1;
 
 
 f0 = 1.5e9;
