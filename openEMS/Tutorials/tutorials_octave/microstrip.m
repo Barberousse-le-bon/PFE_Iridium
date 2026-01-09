@@ -4,11 +4,11 @@
 clear all;
 close all;
 
-only_display = 1;
+only_display = 0;
 
 
-f0 = 2e9;
-fc = f0/2;    # corner frequ
+f0 = 1.5e9;
+fc = f0/3;    # corner frequ
 epsilon = 4.4;
 substrate_width = 20;
 substrate_length = 40;
@@ -37,7 +37,7 @@ CSX = InitCSX();
 
 # define materials
 
-CSX = AddMetal(CSX, 'stripline');         # microstrip line material
+CSX = AddMetal(CSX, 'microstrip');         # microstrip line material
 CSX = AddMetal(CSX, 'ground');       # gnd line material
 CSX = AddMaterial(CSX, 'substrate');  # substrate material
 CSX = SetMaterialProperty(CSX, 'substrate', 'Epsilon', epsilon);
@@ -57,11 +57,11 @@ CSX = AddBox(CSX, 'ground', 0, start_gnd, stop_gnd );
 # create line :
 start_line = [-line_width/2, -substrate_length/2, 0];
 stop_line = [line_width/2, substrate_length/2, trace_thikness];
-CSX = AddBox(CSX, 'stripline', 0, start_line, stop_line );
+CSX = AddBox(CSX, 'microstrip', 0, start_line, stop_line );
 
 #add a quarter wave stub
 
-#CSX = AddBox(CSX, 'stripline', 1, [ line_width/2, -line_width/2, 0], [ line_width/2 + L_stub, line_width/2, trace_thikness ]);
+#CSX = AddBox(CSX, 'microstrip', 1, [ line_width/2, -line_width/2, 0], [ line_width/2 + L_stub, line_width/2, trace_thikness ]);
 
 
 # Field dump for electromagnetic field visualization
@@ -115,12 +115,12 @@ stop_lumped2 = [line_width/2,substrate_length/2,0];
 # save the file to uste it using openEMS
 
 
-mkdir('stripline_simulation');
-WriteOpenEMS('stripline_simulation/stripline.xml', FDTD, CSX);
+mkdir('microstrip_simulation');
+WriteOpenEMS('microstrip_simulation/microstrip.xml', FDTD, CSX);
 
 # display  3D model
 
-CSXGeomPlot('stripline_simulation/stripline.xml');
+CSXGeomPlot('microstrip_simulation/microstrip.xml');
 #comment above for not open the CAD
 #uncomment below for not simulating,
 #return;
@@ -129,13 +129,13 @@ CSXGeomPlot('stripline_simulation/stripline.xml');
 ################################################################################
 
 if(only_display ==0 )
-  RunOpenEMS('stripline_simulation', 'stripline.xml');
+  RunOpenEMS('microstrip_simulation', 'microstrip.xml');
 endif;
 # dispay results
 
 close all % close existing graph windows if any
 freq = linspace(f0-fc, f0+fc, 201);
-port = calcPort(port, 'stripline_simulation', freq);
+port = calcPort(port, 'microstrip_simulation', freq);
 s11 = port{1}.uf.ref./port{1}.uf.inc;
 s21 = port{2}.uf.ref./port{1}.uf.inc;
 
@@ -144,14 +144,14 @@ hold on;
 plot( freq/1e6, 20*log10(abs(s11)), 'r-');
 #plot( freq/1e6, 20*log10(abs(s21)), 'b-');
 grid on
-title({'Reflection Coefficients {\color{red}|S_{11}|} and {\color{blue}|S_{21}|}'});
+title({'Reflection Coefficients {\color{red}|S_{11}|}'});
 xlabel('frequency f / MHz');
 ylabel('Magnitude, dB');
 #ylim([-50 5]);
 
 
 % draw electromagnetic field distribution
-[myField myMesh] = ReadHDF5Dump(['stripline_simulation' '/E_field.h5']);
+[myField myMesh] = ReadHDF5Dump(['microstrip_simulation' '/E_field.h5']);
 myField2 = GetField_TD2FD(myField, f0);
 sx=size(myField2.FD.values{1})(1);
 sy=size(myField2.FD.values{1})(2);
