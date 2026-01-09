@@ -58,16 +58,16 @@ To uderstand better how the FDTD simulation method works, I followed the course 
 
 A simple model of a microstrip has been made on openEMS.
 
-[openEMS line model](/pictures/openEMS_microstrip.png)
+![openEMS line model](/pictures/openEMS_microstrip.png)
 
 And the equivalent model on QUCS :
 
-[QUCS line model](/pictures/QUCS_microstrip.png)
+![QUCS line model](/pictures/QUCS_microstrip.png)
 
 Then here are the results given by both simulations :
 
-[QUCS line simulation results](/pictures/QUCS_microstrip_result.png)
-[OpenEMS line simulation results](/openEMS/Tutorials/tutorials_octave/microstrip_screen_save/wrong_s11.jpg)
+![QUCS line simulation results](/pictures/QUCS_microstrip_result.png)
+![OpenEMS line simulation results](/openEMS/Tutorials/tutorials_octave/microstrip_screen_save/wrong_s11.jpg)
 
 #### Note
 
@@ -75,16 +75,16 @@ We notice a significant shift of the sharp part of the graph, this means there i
 
 Other suspects are the boundary condtions, on the OpenEMS model are all MUR condtions. To verify this hypotheis, we will compare a model of a notch filter between both software as there is already an example available on OpenEMS :
 
-[OpenEMS notch filter model](/pictures/OpenEMS_notch_filter.png)
+![OpenEMS notch filter model](/pictures/OpenEMS_notch_filter.png)
 
 And its replica on QUCS :
 
-[QUCS notch filter model](/pictures/QUCS_notch_filter.png)
+![QUCS notch filter model](/pictures/QUCS_notch_filter.png)
 
 The results are much closer than on the previous simulation :
 
-[QUCS notch filter results](/pictures/QUCS_notch_filter_results.png)
-[OpenEMS notch filter results](/openEMS/Tutorials/tutorials_octave/notch_filter_screen_save/notch_filter_results.png)
+![QUCS notch filter results](/pictures/QUCS_notch_filter_results.png)
+![OpenEMS notch filter results](/openEMS/Tutorials/tutorials_octave/notch_filter_screen_save/notch_filter_results.png)
 
 This time, except the Q factor being better on the OpenEMS simulation the results are much closer.
 
