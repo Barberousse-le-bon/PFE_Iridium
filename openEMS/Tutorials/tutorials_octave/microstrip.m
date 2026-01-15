@@ -103,12 +103,12 @@ FDTD = SetGaussExcite(FDTD, f0, fc);
 FDTD = SetBoundaryCond(FDTD, { 'MUR','MUR','MUR','MUR','MUR','MUR'});
 
 # add two lumped ports
-start_lumped1 = [-line_width/2,-substrate_length/2,-substrate_height];
-stop_lumped1 = [line_width/2,-substrate_length/2,0];
+start_lumped1 = [-3*(line_width/2),-substrate_length/2,-substrate_height-trace_thikness];
+stop_lumped1 = [3*line_width/2,-substrate_length/2,4*substrate_height];
 [CSX port{1}] = AddLumpedPort(CSX, 1,1,50, start_lumped1, stop_lumped1,[0,0,1], true);
 
-start_lumped2 = [-line_width/2,substrate_length/2,-substrate_height];
-stop_lumped2 = [line_width/2,substrate_length/2,0];
+start_lumped2 = [-3*line_width/2,substrate_length/2,-substrate_height-trace_thikness];
+stop_lumped2 = [3*line_width/2,substrate_length/2,4*substrate_height];
 [CSX port{2}] = AddLumpedPort(CSX, 1,2,50, start_lumped2, stop_lumped2,[0,0,1], false);
 
 
