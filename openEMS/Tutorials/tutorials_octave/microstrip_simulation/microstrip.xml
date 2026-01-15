@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <openEMS>
-  <FDTD End_Criteria="0.0001" NumberOfTimesteps="1000000000" endCriteria="1e-05" f_max="2000000000">
-    <Excitation Type="0" f0="1500000000" fc="500000000">
+  <FDTD End_Criteria="0.0001" NumberOfTimesteps="1000000000" endCriteria="1e-05" f_max="3000000000">
+    <Excitation Type="0" f0="2000000000" fc="1000000000">
     </Excitation>
-    <BoundaryCond xmin="MUR" xmax="MUR" ymin="MUR" ymax="MUR" zmin="MUR" zmax="MUR">
+    <BoundaryCond xmin="PML_8" xmax="PML_8" ymin="MUR" ymax="MUR" zmin="PEC" zmax="MUR">
     </BoundaryCond>
   </FDTD>
   <ContinuousStructure CoordSystem="0">

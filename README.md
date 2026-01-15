@@ -71,9 +71,11 @@ Then here are the results given by both simulations :
 
 #### Note
 
-We notice a significant shift of the sharp part of the graph, this means there is probably someting wrong on the OpenEMS simulation. To inversigate futhermore, a sweep parameter simulation has been made on the tand paramter on QUCS. As seen on the graph, it only affect the Q factor, so this is not the issue.
+We notice a significant shift of the sharp part of the graph, this means there is probably someting wrong on the OpenEMS simulation. To inversigate futhermore, a sweep parameter simulation has been made on the tand paramter on QUCS. As seen on the graph, it only affect the Q factor, so this is not the issue. The boundaries conditions are not the issue. 
 
-Other suspects are the boundary condtions, on the OpenEMS model are all MUR condtions. To verify this hypotheis, we will compare a model of a notch filter between both software as there is already an example available on OpenEMS :
+Other suspects are either too big yee cells our wrong ports placement. To verify this hypotheis, more simulations will be made.
+
+we will compare a model of a notch filter between both software as there is already an example available on OpenEMS :
 
 ![OpenEMS notch filter model](/pictures/OpenEMS_notch_filter.png)
 
@@ -90,13 +92,7 @@ This time, except the Q factor being better on the OpenEMS simulation the result
 
 ### Next step
 
-Redo the microstrip line simulation with the boudary conditions of the notch filter thar are :
-
-BC   = {'PML_8' 'PML_8' 'MUR' 'MUR' 'PEC' 'MUR'};
-
-instead of :
-
-BC  =  { 'MUR','MUR','MUR','MUR','MUR','MUR'};
+Redo the microstrip line simulation with different placements of the ports and making sure the cells are small enough
 
 ## Tools used
 
@@ -111,4 +107,3 @@ BC  =  { 'MUR','MUR','MUR','MUR','MUR','MUR'};
 - RaspberryPi
 - rtlSDR
 - PlutoSDR
-- CNC  

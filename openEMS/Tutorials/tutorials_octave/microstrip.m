@@ -7,8 +7,8 @@ close all;
 only_display = 1;
 
 
-f0 = 1.5e9;
-fc = f0/3;    # corner frequ
+f0 = 2e9;
+fc = f0/2;    # corner frequ
 epsilon = 4.4;
 substrate_width = 20;
 substrate_length = 40;
@@ -100,7 +100,7 @@ CSX = DefineRectGrid(CSX, 1/1000, mesh);
 
 FDTD = InitFDTD('End_Criteria', 10^-4);
 FDTD = SetGaussExcite(FDTD, f0, fc);
-FDTD = SetBoundaryCond(FDTD, { 'MUR','MUR','MUR','MUR','MUR','MUR'});
+FDTD = SetBoundaryCond(FDTD, {'PML_8' 'PML_8' 'MUR' 'MUR' 'PEC' 'MUR'});
 
 # add two lumped ports
 start_lumped1 = [-3*(line_width/2),-substrate_length/2,-substrate_height-trace_thikness];
