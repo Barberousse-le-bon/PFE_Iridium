@@ -4,8 +4,8 @@
 clear all;
 close all;
 
-only_display = 1;
-
+only_display = 0;
+foldername = 'microstrip_simulation'
 
 f0 = 2e9;
 fc = f0/2;    # corner frequ
@@ -21,7 +21,12 @@ c = 3e11; # mm/s
 
 line_width = ((7.48*substrate_height)/exp(z0*(sqrt(epsilon+1.41)/87)))-1.25*trace_thikness
 
+
 lambda0 = c/f0 # in mm
+
+mesh_size = lambda0/20
+substrate_height/20
+
 eeff = (epsilon + 1)/2 + (epsilon - 1)/2 * (1 / sqrt(1 + 12*substrate_height/line_width));
 lambdag = lambda0 / sqrt(eeff);
 L_quarter = lambdag / 4;
@@ -103,19 +108,19 @@ FDTD = SetGaussExcite(FDTD, f0, fc);
 FDTD = SetBoundaryCond(FDTD, {'PML_8' 'PML_8' 'MUR' 'MUR' 'PEC' 'MUR'});
 
 # add two lumped ports
-start_lumped1 = [-line_width/2,-substrate_length/2,-substrate_height];
-stop_lumped1 = [line_width/2,-substrate_length/2,0];
+start_lumped1 = [-line_width/2,-substrate_length/2,-substrate_height-trace_thikness];
+stop_lumped1 = [line_width/2,-substrate_length/2+trace_thikness,trace_thikness];
 [CSX port{1}] = AddLumpedPort(CSX, 1,1,50, start_lumped1, stop_lumped1,[0,0,1], true);
 
-start_lumped2 = [-line_width/2,substrate_length/2,-substrate_height];
-stop_lumped2 = [line_width/2,substrate_length/2,0];
+start_lumped2 = [-line_width/2,substrate_length/2,-substrate_height-trace_thikness];
+stop_lumped2 = [line_width/2,substrate_length/2-trace_thikness,trace_thikness];
 [CSX port{2}] = AddLumpedPort(CSX, 1,2,50, start_lumped2, stop_lumped2,[0,0,1], false);
 
 
 # save the file to uste it using openEMS
 
 
-mkdir('microstrip_simulation');
+mkdir(foldername);
 WriteOpenEMS('microstrip_simulation/microstrip.xml', FDTD, CSX);
 
 # display  3D model
@@ -129,13 +134,13 @@ CSXGeomPlot('microstrip_simulation/microstrip.xml');
 ################################################################################
 
 if(only_display ==0 )
-  RunOpenEMS('microstrip_simulation', 'microstrip.xml');
+  RunOpenEMS(foldername, 'microstrip.xml');
 endif;
 # dispay results
 
 close all % close existing graph windows if any
 freq = linspace(f0-fc, f0+fc, 201);
-port = calcPort(port, 'microstrip_simulation', freq);
+port = calcPort(port, foldername, freq);
 s11 = port{1}.uf.ref./port{1}.uf.inc;
 s21 = port{2}.uf.ref./port{1}.uf.inc;
 
@@ -151,7 +156,7 @@ ylabel('Magnitude, dB');
 
 
 % draw electromagnetic field distribution
-[myField myMesh] = ReadHDF5Dump(['microstrip_simulation' '/E_field.h5']);
+[myField myMesh] = ReadHDF5Dump([foldername '/E_field.h5']);
 myField2 = GetField_TD2FD(myField, f0);
 sx=size(myField2.FD.values{1})(1);
 sy=size(myField2.FD.values{1})(2);
