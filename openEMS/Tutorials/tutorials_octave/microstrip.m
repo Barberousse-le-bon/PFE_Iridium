@@ -23,15 +23,16 @@ line_width = ((7.48*substrate_height)/exp(z0*(sqrt(epsilon+1.41)/87)))-1.25*trac
 
 
 lambda0 = c/f0 # in mm
+lambdamin = c/(f0-fc); #in mm
 
-mesh_size = lambda0/20
-substrate_height/20
+resolution = c/((f0+fc)*sqrt(epsilon))/20
 
-eeff = (epsilon + 1)/2 + (epsilon - 1)/2 * (1 / sqrt(1 + 12*substrate_height/line_width));
-lambdag = lambda0 / sqrt(eeff);
-L_quarter = lambdag / 4;
-deltaL = 0.412*substrate_height * ((eeff + 0.3)*(line_width/substrate_height + 0.264)) / ((eeff - 0.258)*(line_width/substrate_height + 0.8));
-L_stub = L_quarter - deltaL;
+#eeff = (epsilon + 1)/2 + (epsilon - 1)/2 * (1 / sqrt(1 + 12*substrate_height/line_width));
+#lambdag = lambda0 / sqrt(eeff);
+#L_quarter = lambdag / 4;
+#deltaL = 0.412*substrate_height * ((eeff + 0.3)*(line_width/substrate_height + 0.264)) / ((eeff - 0.258)*(line_width/substrate_height + 0.8));
+#L_stub = L_quarter - deltaL;
+
 ################################################################################
 #                            CREATION OF THE MODEL                             #
 ################################################################################
@@ -92,7 +93,7 @@ mesh.z = [mesh.z, -substrate_height-10, substrate_height+10]; # two XY planes at
 
 # increase mesh resolution
 
-mesh = SmoothMesh(mesh, substrate_height/20, 1.25); # mesh, max res, ratio
+mesh = SmoothMesh(mesh, resolution, 1.25); # mesh, max res, ratio
 
 
 # define rectangualr grid
@@ -108,12 +109,12 @@ FDTD = SetGaussExcite(FDTD, f0, fc);
 FDTD = SetBoundaryCond(FDTD, {'PML_8' 'PML_8' 'MUR' 'MUR' 'PEC' 'MUR'});
 
 # add two lumped ports
-start_lumped1 = [-3*(line_width/2),-substrate_length/2,-substrate_height-trace_thikness];
-stop_lumped1 = [3*line_width/2,-substrate_length/2,4*substrate_height];
+start_lumped1 = [-line_width/2,-substrate_length/2,-substrate_height-trace_thikness];
+stop_lumped1 = [line_width/2,-substrate_length/2,trace_thikness];
 [CSX port{1}] = AddLumpedPort(CSX, 1,1,50, start_lumped1, stop_lumped1,[0,0,1], true);
 
-start_lumped2 = [-3*line_width/2,substrate_length/2,-substrate_height-trace_thikness];
-stop_lumped2 = [3*line_width/2,substrate_length/2,4*substrate_height];
+start_lumped2 = [-line_width/2,substrate_length/2,-substrate_height-trace_thikness];
+stop_lumped2 = [line_width/2,substrate_length/2,trace_thikness];
 [CSX port{2}] = AddLumpedPort(CSX, 1,2,50, start_lumped2, stop_lumped2,[0,0,1], false);
 
 
