@@ -1,0 +1,29 @@
+<Qucs Schematic 0.0.19>
+<Properties>
+  <View=-49,0,1126,800,1,0,0>
+  <Grid=10,10,0>
+  <DataSet=schem_notvh_filter.dat>
+  <DataDisplay=schem_notvh_filter.sch>
+  <OpenDisplay=1>
+  <Script=schem_notvh_filter.m>
+  <RunScript=0>
+  <showFrame=0>
+  <FrameText0=Titre>
+  <FrameText1=Auteur :>
+  <FrameText2=Date :>
+  <FrameText3=Version :>
+</Properties>
+<Symbol>
+</Symbol>
+<Components>
+</Components>
+<Wires>
+</Wires>
+<Diagrams>
+  <Rect 70 641 929 581 3 #c0c0c0 1 00 1 0 5e+08 7e+09 0 -40 10 10 1 -1 0.2 1 315 0 225 "" "" "">
+	<"DBS11" #0000ff 0 3 0 0 0>
+	<"DBs21" #ff0000 0 3 0 0 0>
+  </Rect>
+</Diagrams>
+<Paintings>
+</Paintings>
